@@ -1,0 +1,28 @@
+{
+  "name": "@bcherny/undux",
+  "version": "0.0.1",
+  "description": "Facebook-specific wrapper for Undux",
+  "main": "index.js",
+  "repository": "git@github.com:bcherny/undux-fb.git",
+  "author": "Boris Cherny <boris@performancejs.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run clean && mkdir dist && npm run build:source && npm run build:types",
+    "build:source": "babel src/index.js > dist/index.js",
+    "build:types": "cp src/index.js.flow dist/index.js.flow",
+    "clean": "shx rm -rf dist",
+    "pretest": "npm run build",
+    "test": "flow focus-check src/index.js && flow focus-check src/index.js.flow && flow focus-check test/test.js"
+  },
+  "dependencies": {
+    "rxjs": "^6.2.1",
+    "undux": "^4.7.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.75.0",
+    "shx": "^0.3.1"
+  }
+}

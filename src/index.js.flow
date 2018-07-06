@@ -1,0 +1,61 @@
+// @flow strict-local
+
+import * as React from 'react'
+import type { Observable } from 'rxjs'
+export type Undux<State: Object> = $ObjMap<State, Lift<State>>
+
+type Lift<State: Object> = <V>(value: V) => Lifted<State, V>
+
+type Lifted<State, T> = {
+  key: $Keys<State>,
+  previousValue: T,
+  value: T
+}
+
+type Exactly<T> = T;
+
+export interface Store<State: Object> {
+  get<K: $Keys<State>>(key: K): $ElementType<State, K>;
+  set<K: $Keys<State>, V: $ElementType<State, K>>(key: K): (value: V) => void;
+  on<K: $Keys<State>>(key: K): Observable<$ElementType<State, K>>;
+  onAll(): Observable<$Values<Undux<State>>>;
+  getState(): $ReadOnly<State>;
+}
+
+declare export class StoreSnapshot<State: Object> implements Store<State> {
+  get<K: $Keys<State>>(key: K): $ElementType<State, K>;
+  set<K: $Keys<State>, V: $ElementType<State, K>>(key: K): (value: V) => void;
+  on<K: $Keys<State>>(key: K): Observable<$ElementType<State, K>>;
+  onAll(): Observable<$Values<Undux<State>>>;
+  getState(): $ReadOnly<State>;
+}
+
+declare export class StoreDefinition<State: Object> implements Store<State> {
+  get<K: $Keys<State>>(key: K): $ElementType<State, K>;
+  set<K: $Keys<State>, V: $ElementType<State, K>>(key: K): (value: V) => void;
+  on<K: $Keys<State>>(key: K): Observable<$ElementType<State, K>>;
+  onAll(): Observable<$Values<Undux<State>>>;
+  getCurrentSnapshot(): StoreSnapshot<State>;
+  getState(): $ReadOnly<State>;
+}
+
+declare export function createStore<State: Object>(initialState: State): StoreDefinition<Exactly<State>>
+export type Plugin<State: Object> = (store: StoreDefinition<State>) => StoreDefinition<State>
+declare export function withLogger<State: Object>(store: StoreDefinition<State>): StoreDefinition<State>
+
+declare export function connect<State: Object>(
+  store: StoreDefinition<State>
+): <S: Store<State>, Props: {store: S}>(
+  Component: React.ComponentType<Props>
+) =>
+  Class<React.Component<$Diff<Props, {store: S}>>>
+
+type GetStoreSnap = <T, S: StoreSnapshot<T>>(storeDef: StoreDefinition<T>) => S
+
+declare export function connectAs<
+  Stores: {[alias: string]: Store<any>}
+>(
+  stores: Stores
+): <Props: Object>(
+  Component: React.ComponentType<Props>
+) => Class<React.Component<$Diff<Props, Stores>>>
