@@ -1,5 +1,5 @@
 {
-  "name": "@bcherny/undux",
+  "name": "undux-fb",
   "version": "0.0.1",
   "description": "Facebook-specific wrapper for Undux",
   "main": "index.js",
